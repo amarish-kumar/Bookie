@@ -59,7 +59,9 @@ YUI().add('bookie-chrome', function (Y) {
             var hashid = model.get('hash_id');
 
             model.remove(function () {
-                localStorage.removeItem(hashid);
+                chrome.storage.local.remove(hashid);
+                
+                //localStorage.removeItem(hashid);
                 window.close();
             });
         },
@@ -107,9 +109,18 @@ YUI().add('bookie-chrome', function (Y) {
             // display to the user we're working on it.
             model.save(function (data, request) {
                 // make sure that we store that this is a saved bookmark in
-                // the localStorage index
+                // the localStorage index 
+                // instead of localStorage, use chromeStorage to avoid unnecessary
+                // boolean to string and string to boolean conversions. 
+                // you can save only so much info
+                // chrome.storage / localStorage max size limit is 5MB
+
                 if (data.bmark.hash_id) {
-                    localStorage.setItem(data.bmark.hash_id, 'true');
+                    chrome.storage.local.set({
+                        {data.bmark.hash_id: true}
+                    });
+
+                    //localStorage.setItem(data.bmark.hash_id, 'true');
                 }
 
                 // update the badge now that we've saved
@@ -371,7 +382,12 @@ YUI().add('bookie-chrome', function (Y) {
                             chrome.tabs.getSelected(null, function (tab) {
                                 // we need to hash this into storage
                                 var hash_id = Y.bookie.Hash.hash_url(tab.url);
-                                localStorage.setItem(hash_id, 'true');
+
+                                chrome.storage.local.set({
+                                    hash_id: true;
+                                });
+
+                                //localStorage.setItem(hash_id, 'true');
                             });
                             window.close();
                         }
@@ -479,11 +495,18 @@ YUI().add('bookie-chrome', function (Y) {
 
     ns.BackgroundPage = Y.Base.create('bookie-chrome-background', Y.Base, [], {
         _check_url_bookmarked: function (url) {
-            var is_bookmarked =
-                localStorage.getItem(Y.bookie.Hash.hash_url(url));
+            var is_bookmarked,
+                urlHash = Y.bookie.Hash.hash_url(url);
+            
+            //localStorage.getItem(Y.bookie.Hash.hash_url(url));
+            
+            chrome.storage.local.get(urlHash, function(object){
+                is_bookmarked = object.urlHash;
+            });
 
             // check if we have this bookmarked
             // if so update the badge text with +
+
             if (is_bookmarked === 'true') {
                 this.badge.is_bookmarked();
             } else {

@@ -118,11 +118,7 @@ YUI().add('bookie-chrome', function (Y) {
                 if (data.bmark.hash_id) {
                     var hash = data.bmark.hash_id;
                     chrome.storage.local.set({
-<<<<<<< HEAD
-                        data.bmark.hash_id: true
-=======
                         hash: true
->>>>>>> edfa42db8ae4549c502812e53c50c7b70218a365
                     });
 
                     //localStorage.setItem(data.bmark.hash_id, 'true');

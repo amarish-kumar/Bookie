@@ -668,7 +668,7 @@ YUI.add('bookie-model', function (Y) {
             this._get_data('api_key', this.get('api_key'));
             this._get_data('cache_content', this.get('cache_content'));
             this._get_data('sync_config', this.get('sync_config'));
-            this._get_data('last_bmark', this.get('last_bmark'));
+            this._get_data('last_bmark', this.get('last_bmark'), callback);
         },
 
 
@@ -730,16 +730,21 @@ YUI.add('bookie-model', function (Y) {
          * @private
          *
          */
-        _get_data: function(key, def) {
+        _get_data: function(key, def, callback) {
 
             var ret,
                 found,
-                sync = this.get('sync_config'),
-                that = this;
+                that = this,
+                sync;
 
             // save the THIS object so that you can update it
             // later in the async call returns
 
+            chrome.storage.local.get('sync_config',function(obj){
+                sync = obj['sync_config'];
+                onSyncRead();
+            });
+            
             function update(object) {
                 if (object.hasOwnProperty(key)) {
                     found = object[key];
@@ -753,18 +758,22 @@ YUI.add('bookie-model', function (Y) {
                     ret = found;
                 }
                 that.set(key, ret);
+
+                if(callback)
+                    callback();
             }
 
-            if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
-                chrome.storage.sync.get(key, function(object) {
-                    update(object);
-                });
-            } else {
-                chrome.storage.local.get(key, function(object) {
-                    update(object);
-                });
+            function onSyncRead(){
+                if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
+                    chrome.storage.sync.get(key, function(object) {
+                        update(object);
+                    });
+                } else {
+                    chrome.storage.local.get(key, function(object) {
+                        update(object);
+                    });
+                }
             }
-
             //found = localStorage.getItem(key);
         },
 

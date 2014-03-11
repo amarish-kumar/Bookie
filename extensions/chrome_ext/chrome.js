@@ -511,7 +511,7 @@ YUI().add('bookie-chrome', function (Y) {
                     var n = new Y.bookie.chrome.Notification({
                         code: '9999',
                         type: 'error',
-                        title: 'Err',
+                        title: 'Options Not Configured',
                         message: 'To start using the extension, fill in the api_key, api_username and the api_url'
                     });
                 }

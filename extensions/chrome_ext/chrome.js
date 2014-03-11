@@ -118,11 +118,7 @@ YUI().add('bookie-chrome', function (Y) {
                 if (data.bmark.hash_id) {
                     var hash = data.bmark.hash_id;
                     chrome.storage.local.set({
-<<<<<<< HEAD
-                        data.bmark.hash_id: true
-=======
                         hash: true
->>>>>>> edfa42db8ae4549c502812e53c50c7b70218a365
                     });
 
                     //localStorage.setItem(data.bmark.hash_id, 'true');
@@ -528,6 +524,23 @@ YUI().add('bookie-chrome', function (Y) {
         init_background: function () {
             var that = this;
 
+            // Keep checking until the user configures a working
+            // combination for the first time.
+        
+            chrome.storage.local.get("optionsConfigured", function(obj) {
+                if (!obj["optionsConfigured"]) {
+                    chrome.tabs.create({
+                        url: "options.html"
+                    });
+                    var n = new Y.bookie.chrome.Notification({
+                        code: '9999',
+                        type: 'error',
+                        title: 'Err',
+                        message: 'To start using the extension, fill in the api_key, api_username and the api_url'
+                    });
+                }
+            });
+            
             // bind to the events to check if the current url is bookmarked or not
             chrome.tabs.onUpdated.addListener(
                 function(tabId, changeInfo, tab) {

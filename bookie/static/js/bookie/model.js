@@ -763,7 +763,6 @@ YUI.add('bookie-model', function (Y) {
                 }
                 that.set(key, ret);
 
-<<<<<<< HEAD
                 if(callback)
                     callback();
             }
@@ -779,7 +778,7 @@ YUI.add('bookie-model', function (Y) {
                     });
                 }
             }
-=======
+
             function onSyncRead(){
                 if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
                     chrome.storage.sync.get(key, function(object) {
@@ -791,7 +790,6 @@ YUI.add('bookie-model', function (Y) {
                     });
                 }
             }
->>>>>>> edfa42db8ae4549c502812e53c50c7b70218a365
             //found = localStorage.getItem(key);
         },
 

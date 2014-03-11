@@ -746,7 +746,6 @@ YUI.add('bookie-model', function (Y) {
             });
             
             function update(object) {
-                console.log(object);
                 if (object.hasOwnProperty(key)) {
                     found = object[key];
                 } else {
@@ -758,7 +757,6 @@ YUI.add('bookie-model', function (Y) {
                 } else {
                     ret = found;
                 }
-                console.log(key + " " + ret);
                 that.set(key, ret);
             }
 

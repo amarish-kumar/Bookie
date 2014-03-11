@@ -721,12 +721,16 @@ YUI.add('bookie-model', function (Y) {
         },
 
         /**
-         * A helper to getting data from localStorage, but using the passed in
-         * default if the key isn't found.
+         * A helper to set the ATTR corresponding to the requested key field. 
+         * Unlike localStorage, chrome.storage.local/sync is asynchronous. Instead of 
+         * returning the value from _get_data the function takes care of 
+         * setting the values once the async call returns. 
+         * 
+         * If the key is not found, default values are set.
          *
          * @method _get_data
          * @param {String} key
-         * @param def
+         * @param {String}def
          * @private
          *
          */

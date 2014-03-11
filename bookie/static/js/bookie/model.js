@@ -721,12 +721,16 @@ YUI.add('bookie-model', function (Y) {
         },
 
         /**
-         * A helper to getting data from localStorage, but using the passed in
-         * default if the key isn't found.
+         * A helper to set the ATTR corresponding to the requested key field. 
+         * Unlike localStorage, chrome.storage.local/sync is asynchronous. Instead of 
+         * returning the value from _get_data the function takes care of 
+         * setting the values once the async call returns. 
+         * 
+         * If the key is not found, default values are set.
          *
          * @method _get_data
          * @param {String} key
-         * @param def
+         * @param {String}def
          * @private
          *
          */
@@ -759,6 +763,7 @@ YUI.add('bookie-model', function (Y) {
                 }
                 that.set(key, ret);
 
+<<<<<<< HEAD
                 if(callback)
                     callback();
             }
@@ -774,6 +779,19 @@ YUI.add('bookie-model', function (Y) {
                     });
                 }
             }
+=======
+            function onSyncRead(){
+                if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
+                    chrome.storage.sync.get(key, function(object) {
+                        update(object);
+                    });
+                } else {
+                    chrome.storage.local.get(key, function(object) {
+                        update(object);
+                    });
+                }
+            }
+>>>>>>> edfa42db8ae4549c502812e53c50c7b70218a365
             //found = localStorage.getItem(key);
         },
 

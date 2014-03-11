@@ -734,13 +734,19 @@ YUI.add('bookie-model', function (Y) {
 
             var ret,
                 found,
-                sync = this.get('sync_config'),
-                that = this;
+                that = this,
+                sync;
 
             // save the THIS object so that you can update it
             // later in the async call returns
 
+            chrome.storage.local.get('sync_config',function(obj){
+                sync = obj['sync_config'];
+                onSyncRead();
+            });
+            
             function update(object) {
+                console.log(object);
                 if (object.hasOwnProperty(key)) {
                     found = object[key];
                 } else {
@@ -752,19 +758,21 @@ YUI.add('bookie-model', function (Y) {
                 } else {
                     ret = found;
                 }
+                console.log(key + " " + ret);
                 that.set(key, ret);
             }
 
-            if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
-                chrome.storage.sync.get(key, function(object) {
-                    update(object);
-                });
-            } else {
-                chrome.storage.local.get(key, function(object) {
-                    update(object);
-                });
+            function onSyncRead(){
+                if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
+                    chrome.storage.sync.get(key, function(object) {
+                        update(object);
+                    });
+                } else {
+                    chrome.storage.local.get(key, function(object) {
+                        update(object);
+                    });
+                }
             }
-
             //found = localStorage.getItem(key);
         },
 

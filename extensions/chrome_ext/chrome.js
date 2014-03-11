@@ -116,8 +116,9 @@ YUI().add('bookie-chrome', function (Y) {
                 // chrome.storage / localStorage max size limit is 5MB
 
                 if (data.bmark.hash_id) {
+                    var hash = data.bmark.hash_id;
                     chrome.storage.local.set({
-                        {data.bmark.hash_id: true}
+                        hash: true
                     });
 
                     //localStorage.setItem(data.bmark.hash_id, 'true');
@@ -384,7 +385,7 @@ YUI().add('bookie-chrome', function (Y) {
                                 var hash_id = Y.bookie.Hash.hash_url(tab.url);
 
                                 chrome.storage.local.set({
-                                    hash_id: true;
+                                    hash_id: true
                                 });
 
                                 //localStorage.setItem(hash_id, 'true');

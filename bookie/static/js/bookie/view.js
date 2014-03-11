@@ -2062,6 +2062,13 @@ YUI.add('bookie-view', function (Y) {
                             opts.set('sync_config', false);
                         }
 
+                        // set the flag so that it doesn't bug you everytime
+                        // for the configuration
+                        
+                        chrome.storage.local.set({
+                            "optionsConfigured": true
+                        });
+
                         // one updated, now save it
                         opts.save();
                         that._show_message('Saved your settings...', true);

@@ -741,9 +741,6 @@ YUI.add('bookie-model', function (Y) {
                 that = this,
                 sync;
 
-            // save the THIS object so that you can update it
-            // later in the async call returns
-
             chrome.storage.local.get('sync_config',function(obj){
                 sync = obj['sync_config'];
                 onSyncRead();
@@ -763,8 +760,10 @@ YUI.add('bookie-model', function (Y) {
                 }
                 that.set(key, ret);
 
-                if(callback)
+                if(callback){
                     callback();
+                }
+                    
             }
 
             function onSyncRead(){
@@ -790,7 +789,6 @@ YUI.add('bookie-model', function (Y) {
                     });
                 }
             }
-            //found = localStorage.getItem(key);
         },
 
         get_apicfg: function () {

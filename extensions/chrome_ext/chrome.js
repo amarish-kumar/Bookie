@@ -502,7 +502,6 @@ YUI().add('bookie-chrome', function (Y) {
 
             // Keep checking until the user configures a working
             // combination for the first time.
-        
             chrome.storage.local.get("optionsConfigured", function(obj) {
                 if (!obj["optionsConfigured"]) {
                     chrome.tabs.create({

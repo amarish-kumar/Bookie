@@ -2047,7 +2047,7 @@ YUI.add('bookie-view', function (Y) {
                         chrome.storage.local.set({
                             "optionsConfigured": true
                         });
-                        
+
                         // Now that we have updated the settings in memory, 
                         // do the same with offline chrome.storage
                         opts.save();

@@ -108,24 +108,22 @@ YUI().add('bookie-chrome', function (Y) {
             // should just be able to fire the save method on the model and
             // display to the user we're working on it.
             model.save(function (data, request) {
-                // make sure that we store that this is a saved bookmark in
-                // the localStorage index 
-                // instead of localStorage, use chromeStorage to avoid unnecessary
+                // Use chrome.storage.local to save the bookmark. 
+                // Use chrome.storage to avoid unnecessary
                 // boolean to string and string to boolean conversions. 
-                // you can save only so much info
-                // chrome.storage / localStorage max size limit is 5MB
+                // You can save only so much info in chrome.storage/localStorage.
+                // Max size limitation for an app is 5MB
 
                 if (data.bmark.hash_id) {
-                    var hash = data.bmark.hash_id;
-                    chrome.storage.local.set({
-                        hash: true
-                    }, function() {
-                        // update the badge now that we've saved
-                        var b = new Y.bookie.chrome.Badge();
-                        b.success();
-                        window.close();
-                    });
+                    var obj = {};
+                    obj[data.bmark.hash_id] = true;
+                    chrome.storage.local.set(obj);
                 }
+
+                // Update the badge now that we've saved.
+                var b = new Y.bookie.chrome.Badge();
+                b.success();
+                window.close();
             });
         },
 
@@ -376,15 +374,14 @@ YUI().add('bookie-chrome', function (Y) {
                             n.cancel();
                         }, 5000);
                     } else {
-                        // some post notify checks
+                        // Some post notify checks
                         if (this.get('description') === "saved") {
                             chrome.tabs.getSelected(null, function (tab) {
-                                // we need to hash this into storage
+                                // We need to hash this into storage.
                                 var hash = Y.bookie.Hash.hash_url(tab.url);
-                                
-                                chrome.storage.local.set({
-                                    hash: true
-                                });
+                                var obj = {};
+                                obj[hash] = true;
+                                chrome.storage.local.set(obj);
                             });
                             window.close();
                         }

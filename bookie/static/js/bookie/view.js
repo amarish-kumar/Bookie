@@ -1965,15 +1965,15 @@ YUI.add('bookie-view', function (Y) {
             api.call({
                 'success': function (data, request) {
                     Y.Array.each(data.hash_list, function (h) {
-                        // write out each hash to localStorage
-                        // url hashes are stored locally
-                        // bookmarks are anyways stored in the server
-                        // only config is synced across extension instances
+                        // Write out each hash to chrome.storage
+                        // URL hashes are stored locally while the 
+                        // bookmarks are anyways stored in the server.
+                        // Only the config ["api_url","api_username","api_key","cache_content"] 
+                        // is synced across extension instances
 
-                        // localStorage.setItem(h, 'true');
-                        chrome.storage.local.set({
-                            h: true
-                        });
+                        var obj = {};
+                        obj[h] = true;
+                        chrome.storage.local.set(obj);
                     });
 
                     // finally stop the indicator from spinny spinny

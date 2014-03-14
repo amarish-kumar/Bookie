@@ -1875,9 +1875,8 @@ YUI.add('bookie-view', function (Y) {
          */
         _init_form: function () {
         
-            // this model is populated by options.js at the beginning
+            // This model is populated by options.js at the beginning
             // options.js invokes load() to read from chrome.storage
-
             var opts = this.get('model');
 
             Y.one('#api_url').set('value', opts.get('api_url'));
@@ -1895,7 +1894,6 @@ YUI.add('bookie-view', function (Y) {
             } else {
                 Y.one('#sync_config').set('checked', false);
             }
-            
         },
 
         /**
@@ -1969,7 +1967,7 @@ YUI.add('bookie-view', function (Y) {
                         // URL hashes are stored locally while the 
                         // bookmarks are anyways stored in the server.
                         // Only the config ["api_url","api_username","api_key","cache_content"] 
-                        // is synced across extension instances
+                        // is synced across extension instances.
 
                         var obj = {};
                         obj[h] = true;

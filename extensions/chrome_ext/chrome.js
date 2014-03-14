@@ -60,8 +60,6 @@ YUI().add('bookie-chrome', function (Y) {
 
             model.remove(function () {
                 chrome.storage.local.remove(hashid);
-                
-                //localStorage.removeItem(hashid);
                 window.close();
             });
         },
@@ -374,7 +372,7 @@ YUI().add('bookie-chrome', function (Y) {
                             n.cancel();
                         }, 5000);
                     } else {
-                        // Some post notify checks
+                        // Some post notify checks.
                         if (this.get('description') === "saved") {
                             chrome.tabs.getSelected(null, function (tab) {
                                 // We need to hash this into storage.

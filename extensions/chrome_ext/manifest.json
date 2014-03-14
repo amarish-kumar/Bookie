@@ -7,15 +7,17 @@
         "default_popup": "popup.html",
         "default_title": "Post Bookie Bookmark"
     },
-    "content_scripts": [{
-        "js": [
-            "shortcut.js"
-        ],
-        "matches": [
-            "http://*/*",
-            "https://*/*"
-        ]
-    }],
+    "content_scripts": [
+        {
+            "js": [
+                "shortcut.js"
+            ],
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ]
+        }
+    ],
     "description": "Bookie Bookmarks",
     "icons": {
         "128": "logo.128.png",
@@ -26,12 +28,12 @@
     "name": "Bookie",
     "options_page": "options.html",
     "permissions": [
-        "tabs",
-        "notifications",
         "contextMenus",
         "https://*/*",
         "http://*/*",
-        "storage"
+        "notifications",
+        "storage",
+        "tabs"
     ],
     "version": "0.4.12"
 }

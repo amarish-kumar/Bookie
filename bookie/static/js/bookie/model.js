@@ -691,12 +691,10 @@ YUI.add('bookie-model', function (Y) {
          */
         _update: function(options, callback) {
 
-            // everything except last_bmark is synced based on the sync_config flag
-            // no error checking is done at this moment.
-            // check for runtime.lastError if writing to chrome.storage fails
-            // get the sync_config checkbox value
-            // before updating the local storage, the value is updated in the memory
-
+            // Everything except last_bmark is synced based on the sync_config flag
+            // No error checking is done at this moment. Check for runtime.lastError
+            // if writing to chrome.storage fails
+            // Based on the current selection, store in either chrome.storage.sync/local
             var sync = this.get('sync_config');
 
             if (sync) {

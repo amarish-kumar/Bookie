@@ -119,15 +119,13 @@ YUI().add('bookie-chrome', function (Y) {
                     var hash = data.bmark.hash_id;
                     chrome.storage.local.set({
                         hash: true
+                    }, function() {
+                        // update the badge now that we've saved
+                        var b = new Y.bookie.chrome.Badge();
+                        b.success();
+                        window.close();
                     });
-
-                    //localStorage.setItem(data.bmark.hash_id, 'true');
                 }
-
-                // update the badge now that we've saved
-                var b = new Y.bookie.chrome.Badge();
-                b.success();
-                window.close();
             });
         },
 
@@ -382,13 +380,11 @@ YUI().add('bookie-chrome', function (Y) {
                         if (this.get('description') === "saved") {
                             chrome.tabs.getSelected(null, function (tab) {
                                 // we need to hash this into storage
-                                var hash_id = Y.bookie.Hash.hash_url(tab.url);
-
+                                var hash = Y.bookie.Hash.hash_url(tab.url);
+                                
                                 chrome.storage.local.set({
-                                    hash_id: true
+                                    hash: true
                                 });
-
-                                //localStorage.setItem(hash_id, 'true');
                             });
                             window.close();
                         }
@@ -469,7 +465,7 @@ YUI().add('bookie-chrome', function (Y) {
          */
         is_bookmarked: function () {
             this._set_badge('+', this._colors.blue);
-        },
+        },  
 
         show_error: function () {
             this._set_badge('Err', this._colors.red, this.get('time'));
@@ -497,22 +493,20 @@ YUI().add('bookie-chrome', function (Y) {
     ns.BackgroundPage = Y.Base.create('bookie-chrome-background', Y.Base, [], {
         _check_url_bookmarked: function (url) {
             var is_bookmarked,
-                urlHash = Y.bookie.Hash.hash_url(url);
+                urlHash = Y.bookie.Hash.hash_url(url),
+                that = this;
             
-            //localStorage.getItem(Y.bookie.Hash.hash_url(url));
-            
-            chrome.storage.local.get(urlHash, function(object){
+            chrome.storage.local.get(urlHash, function(object) {
                 is_bookmarked = object.urlHash;
+                
+                // check if we have this bookmarked
+                // if so update the badge text with +
+                if (is_bookmarked) {
+                    that.badge.is_bookmarked();
+                } else {
+                    that.badge.clear();
+                }
             });
-
-            // check if we have this bookmarked
-            // if so update the badge text with +
-
-            if (is_bookmarked === 'true') {
-                this.badge.is_bookmarked();
-            } else {
-                this.badge.clear();
-            }
         },
 
         initializer: function (cfg) {

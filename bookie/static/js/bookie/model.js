@@ -663,14 +663,21 @@ YUI.add('bookie-model', function (Y) {
          *
          */
         _read: function(options, callback) {
-            this._get_data('api_url', this.get('api_url'));
-            this._get_data('api_username', this.get('api_username'));
-            this._get_data('api_key', this.get('api_key'));
-            this._get_data('cache_content', this.get('cache_content'));
-            this._get_data('sync_config', this.get('sync_config'));
-            this._get_data('last_bmark', this.get('last_bmark'), callback);
-        },
+            // At the moment, we request all of the variables at a stretch. 
+            // It maybe possible in the future to request any of these.
 
+            var keys = ['api_url', 'api_username', 'api_key', 'cache_content'];
+            var store = {
+                'api_url': this.get('api_url'),
+                'api_username': this.get('api_username'),
+                'api_key': this.get('api_key'),
+                'cache_content': this.get('cache_content'),
+                'sync_config': this.get('sync_config'),
+                'last_bmark': this.get('last_bmark'),
+            };
+
+            this._get_data(keys, store, callback);
+        },
 
         /**
          * Handle the save() event for objects that have an id and write it
@@ -712,87 +719,74 @@ YUI.add('bookie-model', function (Y) {
                 'last_bmark': this.get('last_bmark'),
                 'sync_config': sync
             });
-
-            // localStorage.setItem('api_url', this.get('api_url'));
-            // localStorage.setItem('api_username', this.get('api_username'));
-            // localStorage.setItem('api_key', this.get('api_key'));
-            // localStorage.setItem('cache_content', this.get('cache_content'));
-            // localStorage.setItem('last_bmark', this.get('last_bmark'));
         },
 
         /**
-         * A helper to set the ATTR corresponding to the requested key field. 
-         * Unlike localStorage, chrome.storage.local/sync is asynchronous. Instead of 
+         * A helper to set the ATTRS. Unlike localStorage, 
+         * chrome.storage.local/sync is asynchronous. Instead of 
          * returning the value from _get_data the function takes care of 
          * setting the values once the async call returns. 
          * 
-         * If the key is not found, default values are set.
+         * If any of the key in the array "keys" is not found, 
+         * values corresponding to that key in the object "store" is used. 
          *
          * @method _get_data
-         * @param {String} key
-         * @param {String}def
+         * @param {Array} keys
+         * @param {Object} store
+         * @param {Function} callback
          * @private
          *
          */
-        _get_data: function(key, def, callback) {
-
+        _get_data: function(keys, store, callback) {
+            // "store" is the object that contains a map of keys with
+            // their corresponding values from the memory.
             var ret,
                 found,
-                that = this,
-                sync;
+                data = {},
+                that = this;
 
-            // save the THIS object so that you can update it
-            // later in the async call returns
-
-            chrome.storage.local.get('sync_config',function(obj){
-                sync = obj['sync_config'];
+            // The following keys are always stored in chrome.storage.local
+            chrome.storage.local.get(['sync_config', 'last_bmark'], function(object) {
+                data = Y.merge(object, data);
                 onSyncRead();
             });
-            
-            function update(object) {
-                if (object.hasOwnProperty(key)) {
-                    found = object[key];
-                } else {
-                    found = null;
-                }
 
-                if (found === null || found === undefined) {
-                    ret = def;
-                } else {
-                    ret = found;
-                }
-                that.set(key, ret);
+            function update() {
+                keys.push('sync_config', 'last_bmark');
 
+                Y.Array.each(keys, function(item, index, array) {
+                    if (data.hasOwnProperty(item)) {
+                        found = data[item];
+                    } else {
+                        found = null;
+                    }
 
-                if(callback)
+                    if (found === null || found === undefined) {
+                        ret = store[item];
+                    } else {
+                        ret = found;
+                    }
+                    that.set(item, ret);
+                });
+
+                if (callback) {
                     callback();
-            }
-
-            function onSyncRead(){
-                if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
-                    chrome.storage.sync.get(key, function(object) {
-                        update(object);
-                    });
-                } else {
-                    chrome.storage.local.get(key, function(object) {
-                        update(object);
-                    });
                 }
             }
 
-            function onSyncRead(){
-                if (sync && (key === 'api_key' || key === 'api_username' || key === 'api_url' || key === 'cache_content')) {
-                    chrome.storage.sync.get(key, function(object) {
-                        update(object);
+            function onSyncRead() {
+                if (data['sync_config']) {
+                    chrome.storage.sync.get(keys, function(object) {
+                        data = Y.merge(object, data);
+                        update();
                     });
                 } else {
-                    chrome.storage.local.get(key, function(object) {
-                        update(object);
+                    chrome.storage.local.get(keys, function(object) {
+                        data = Y.merge(object, data);
+                        update();
                     });
                 }
             }
-
-            //found = localStorage.getItem(key);
         },
 
         get_apicfg: function () {

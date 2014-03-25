@@ -359,18 +359,23 @@ YUI().add('bookie-chrome', function (Y) {
             initializer: function (cfg) {
                 if (window.chrome !== undefined && chrome.tabs) {
                     if(this.get('type') === "error") {
-                        //show a desktop notification
-                        var n = webkitNotifications.createNotification(
-                            'logo.128.png',
-                            this.get('title'),
-                            this.get('message')
-                            );
-                        n.show();
 
-                        //hide the desktop notification after 5 seconds
-                        window.setTimeout(function() {
-                            n.cancel();
-                        }, 5000);
+                        //Show a desktop notification.
+                        var notifId,
+                            notifOptions = {
+                                type: 'basic',
+                                message: this.get('message'),
+                                title: this.get('title'),
+                                iconUrl: 'logo.128.png'
+                            };
+
+                        chrome.notifications.create("", notifOptions, function(notificationId) {
+                            notifId = notificationId;
+
+                            window.setTimeout(function() {
+                                chrome.notifications.clear(notifId, function(cleared) {});
+                            }, 5000);
+                        });
                     } else {
                         // Some post notify checks.
                         if (this.get('description') === "saved") {
